@@ -1,0 +1,9 @@
+---
+- name: Configure the VM
+  hosts: all
+  tasks:
+    - name: Install Go
+      apt:
+        name: golang
+        state: present
+

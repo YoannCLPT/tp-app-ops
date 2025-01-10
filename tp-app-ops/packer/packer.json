@@ -1,0 +1,36 @@
+{
+    "builders": [
+      {
+        "type": "googlecompute",
+        "project_id": "tp-app-ops",
+        "source_image_family": "debian-11",
+        "zone": "europe-west9-b",
+        "machine_type": "e2-medium",
+        "image_name": "app-image-{{timestamp}}",
+        "image_family": "app-family",
+        "ssh_username": "packer",
+        "ssh_private_key_file": "/home/y_clpt/.ssh/packer_key"
+      }
+    ],
+    "provisioners": [
+      {
+        "type": "shell",
+        "inline": [
+          "export DEBIAN_FRONTEND=noninteractive",
+          "echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections",
+          "sudo apt-get update -y",
+          "sudo apt-get install -y --no-install-recommends ansible",
+          "sudo apt-get install -y debconf-utils",
+          "sudo apt-get install -y python3-apt"
+        ]
+      },
+      {
+        "type": "ansible",
+        "playbook_file": "ansible/playbook.yml",
+        "extra_arguments": [
+        "--extra-vars", "ansible_ssh_private_key_file=/home/y_clpt/.ssh/packer_key ansible_ssh_user=packer"
+      ]
+      }
+    ]
+  }
+  
